@@ -99,6 +99,7 @@ public class StackAnalyzer {
 	
 	void parseCatchBlocks() throws BadBytecode {
 		for(int index : context.exceptionHandlers) {
+			System.out.println(index);
 			analyze(index, new Stack().push(new Whatever()));
 		}
 	}
@@ -116,6 +117,10 @@ public class StackAnalyzer {
 				Op opcode = Opcodes.OPCODES.get(iterator.byteAt(index));
                 if(opcode == null) continue;
                 Op op = opcode.init(context, index);
+                if (op.code == 58 && currentStack.isEmpty()) { // in case of ASTORE operation
+                		currentStack = new Stack();
+                		currentStack.push(new Whatever());
+                } 
 				trace.append("\n").append(index).append(":").append(op.getName()).append(" --> ");
 				Frame frame = frames[index];
 				frame.isAccessible = true;
@@ -140,10 +145,12 @@ public class StackAnalyzer {
 				
 				if(op instanceof BranchOpCode) {
 					BranchOpCode branchOpCode = op.as(BranchOpCode.class);
-					int jump = branchOpCode.decode(context, index).getJump();
-					analyze(jump, frame.stackAfter);
-					if(!branchOpCode.isConditional())
-						return;
+						int jump = branchOpCode.decode(context, index).getJump();
+						if (jump <= frames.length) {
+							analyze(jump, frame.stackAfter);	
+						}
+						if(!branchOpCode.isConditional())
+							return;
 				}
 				
 				if(op instanceof SwitchOpcode) {

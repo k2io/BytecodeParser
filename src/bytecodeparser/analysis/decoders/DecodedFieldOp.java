@@ -26,9 +26,7 @@ import javassist.bytecode.Opcode;
 import bytecodeparser.Context;
 import bytecodeparser.analysis.opcodes.FieldOpcode;
 import bytecodeparser.analysis.stack.Stack;
-import bytecodeparser.analysis.stack.Whatever;
 import bytecodeparser.analysis.stack.Stack.StackElementLength;
-import bytecodeparser.analysis.stack.ValueFromField;
 
 /**
  * A decoded field operation op.
@@ -40,42 +38,22 @@ public class DecodedFieldOp extends DecodedOp {
 	protected boolean load;
 	protected boolean isStatic;
 	protected StackElementLength stackElementLength;
-	protected String name;
 	
 	public DecodedFieldOp(FieldOpcode fo, Context context, int index) {
 		super(fo, context, index);
 		String descriptor = context.behavior.getMethodInfo().getConstPool().getFieldrefType(getMethodRefIndex());
-		String name = context.behavior.getMethodInfo().getConstPool().getFieldrefName(getMethodRefIndex());
 		StackElementLength sel = ONE;
 		if(Descriptor.dataSize(descriptor) == 2)
 			sel = DOUBLE;
 		this.stackElementLength = sel;
 		this.descriptor = descriptor;
-		this.name = name;
 		this.load = fo.getCode() == Opcode.GETFIELD || fo.getCode() == Opcode.GETSTATIC;
 		this.isStatic = fo.getCode() == Opcode.GETSTATIC ||fo.getCode() == Opcode.PUTSTATIC;
 	}
 	
 	@Override
 	public void simulate(Stack stack) {
-		//Stack.processBasicAlteration(stack, , );
-		StackElementLength[] pops = getPops();
-		StackElementLength[] pushes = getPushes();
-		
-		for(int i = 0; i < pops.length; i++) {
-			if(pops[i] == DOUBLE)
-				stack.pop2();
-			else stack.pop();
-		}
-		ValueFromField value = new ValueFromField(this.name, this.name);
-		for(int i = 0; i < pushes.length; i++) {
-			if(pushes[i] == DOUBLE) {
-				stack.push2(value);
-			} else {
-				stack.push(value);
-			}
-		}
-		
+		Stack.processBasicAlteration(stack, getPops(), getPushes());
 	}
 	
 	/**

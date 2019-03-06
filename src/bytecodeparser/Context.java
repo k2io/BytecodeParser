@@ -56,9 +56,13 @@ public class Context {
 		ExceptionTable exceptionTable = this.behavior.getMethodInfo().getCodeAttribute().getExceptionTable();
 		
 		if(exceptionTable != null) {
-			this.exceptionHandlers = new int[exceptionTable.size()];
+			this.exceptionHandlers = new int[exceptionTable.size()*2];
+			int j = 0;
 			for(int i = 0; i < exceptionTable.size(); i++) {
 				exceptionHandlers[i] = exceptionTable.handlerPc(i);
+			}
+			for (int i=exceptionTable.size(); i<exceptionTable.size()*2; i++) {
+				exceptionHandlers[i] = exceptionTable.endPc(i-exceptionTable.size());
 			}
 		} else {
 			this.exceptionHandlers = new int[0];
