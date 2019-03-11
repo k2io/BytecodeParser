@@ -99,7 +99,7 @@ public class StackAnalyzer {
 	
 	void parseCatchBlocks() throws BadBytecode {
 		for(int index : context.exceptionHandlers) {
-			System.out.println(index);
+//			System.out.println(index);
 			analyze(index, new Stack().push(new Whatever()));
 		}
 	}
