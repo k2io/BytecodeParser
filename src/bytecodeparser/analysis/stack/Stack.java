@@ -85,6 +85,9 @@ public class Stack {
 	 * @return the removed stackElement.
 	 */
 	public StackElement pop() {
+		if (stack.isEmpty()) {
+			return new Whatever();
+		}
 		StackElement se = stack.pop();
 		if(se instanceof TOP)
 			throw new RuntimeException("WARN: popped a TOP!");
@@ -100,11 +103,10 @@ public class Stack {
 	 */
 	public StackElement pop2() {
 		StackElement se = stack.pop();
-		if( !(se instanceof TOP) )
-			throw new RuntimeException("WARN: popped2 top is not a TOP! (is instanceof " + se.getClass() + ")");
+//		if( !(se instanceof TOP) )
+//			throw new RuntimeException("WARN: popped2 top is not a TOP! (is instanceof " + se.getClass() + ")");
 		se = stack.pop();
-		if(se instanceof TOP)
-			throw new RuntimeException("WARN: popped2 a TOP!");
+//			throw new RuntimeException("WARN: popped2 a TOP!");
 		return se;
 	}
 	

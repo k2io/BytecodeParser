@@ -107,8 +107,9 @@ public class StackAnalyzer {
 	void analyze(int from, Stack stack) throws BadBytecode {
 		StringBuffer trace = new StringBuffer();
 		try {
-			if(frames[from].isAccessible) // already parsed
+			if(frames[from] == null || frames[from].isAccessible) {
 				return;
+			} // already parsed or frame is null, due to JSR issue 
 			CodeIterator iterator = context.behavior.getMethodInfo().getCodeAttribute().iterator();
 			iterator.move(from);
 			Stack currentStack = stack.copy();
@@ -117,7 +118,7 @@ public class StackAnalyzer {
 				Op opcode = Opcodes.OPCODES.get(iterator.byteAt(index));
                 if(opcode == null) continue;
                 Op op = opcode.init(context, index);
-                if (op.code == 58 && currentStack.isEmpty()) { // in case of ASTORE operation
+                if ((op.code == 58 || op.code == 54 || op.code == 191 || op.code == 195 || op.code == 198 || op.code == 183) && currentStack.isEmpty()) { // in case of ASTORE operation
                 		currentStack = new Stack();
                 		currentStack.push(new Whatever());
                 } 
