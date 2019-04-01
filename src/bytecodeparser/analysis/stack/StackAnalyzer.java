@@ -107,7 +107,7 @@ public class StackAnalyzer {
 	void analyze(int from, Stack stack) throws BadBytecode {
 		StringBuffer trace = new StringBuffer();
 		try {
-			if(frames[from] == null || frames[from].isAccessible) {
+			if(frames!=null && from< frames.length &&( frames[from] == null || frames[from].isAccessible)) {
 				return;
 			} // already parsed or frame is null, due to JSR issue 
 			CodeIterator iterator = context.behavior.getMethodInfo().getCodeAttribute().iterator();
